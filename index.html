@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Cricket Dashboard</title>
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <link rel="stylesheet" href="styles.css?v=c1r2k3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Background Overlay -->
+        <div class="bg-overlay"></div>
+
+        <!-- Header Section -->
+        <header>
+            <div class="match-info">
+                <span class="match-type">ICC WORLD CUP 2026 - FINAL</span>
+                <span class="venue">Narendra Modi Stadium, Ahmedabad</span>
+            </div>
+            <div class="live-indicator">
+                <span class="dot"></span> LIVE
+            </div>
+        </header>
+
+        <!-- Main Scoreboard -->
+        <main class="scoreboard">
+            <div class="team-container team-1">
+                <div class="team-logo" id="team1-logo">IND</div>
+                <div class="team-name">INDIA</div>
+            </div>
+
+            <div class="score-display">
+                <div class="current-score" id="score">0/0</div>
+                <div class="overs" id="overs">(0.0)</div>
+                <div class="target-container" id="target-info">
+                    <span class="target-label">CRR:</span> <span id="crr">0.00</span>
+                </div>
+            </div>
+
+            <div class="team-container team-2">
+                <div class="team-logo" id="team2-logo">AUS</div>
+                <div class="team-name">AUSTRALIA</div>
+            </div>
+        </main>
+
+        <!-- Stats Section -->
+        <section class="stats-grid">
+            <div class="stat-card batter">
+                <h3>BATTER</h3>
+                <div class="player-row active">
+                    <span class="name" id="batter1-name">Virat Kohli</span>
+                    <span class="runs" id="batter1-runs">0*</span>
+                    <span class="balls" id="batter1-balls">(0)</span>
+                </div>
+                <div class="player-row">
+                    <span class="name" id="batter2-name">Rohit Sharma</span>
+                    <span class="runs" id="batter2-runs">0</span>
+                    <span class="balls" id="batter2-balls">(0)</span>
+                </div>
+            </div>
+
+            <div class="stat-card bowler">
+                <h3>BOWLER</h3>
+                <div class="player-row active">
+                    <span class="name" id="bowler-name">Pat Cummins</span>
+                    <span class="wickets" id="bowler-stats">0-0</span>
+                    <span class="overs" id="bowler-overs">(0.0)</span>
+                </div>
+            </div>
+
+            <div class="stat-card timeline">
+                <h3>RECENT BALLS</h3>
+                <div class="ball-timeline" id="recent-balls">
+                    <!-- Balls will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- News Ticker -->
+        <footer>
+            <div class="ticker-wrap">
+                <div class="ticker" id="news-ticker">
+                    <span>India won the toss and elected to bat first</span>
+                    <span>Huge crowd gathered at the stadium for the grand finale</span>
+                    <span>Atmosphere is electric as the players walk into the middle</span>
+                    <span>Weather forecast: Clear skies, ideal for cricket</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js?v=c1r2k3"></script>
+</body>
+</html>

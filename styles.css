@@ -1,0 +1,292 @@
+:root {
+    --primary: #00b7af;
+    --dark: #10181f;
+    --light: #ffffff;
+    --secondary: #6a7071;
+    --danger: #ff4d4d;
+    --accent: #ffd700;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--dark);
+    color: var(--light);
+    overflow: hidden; /* For digital signage */
+    width: 100vw;
+    height: 100vh;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    background: url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1776269985208%2Fassets%2Fcricket_bg-1776270058776.png') no-repeat center center/cover;
+}
+
+.bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(16, 24, 31, 0.95) 0%, rgba(16, 24, 31, 0.6) 100%);
+    z-index: 0;
+}
+
+header, main, section, footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.match-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.match-type {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 2px;
+}
+
+.venue {
+    font-size: 1rem;
+    color: var(--secondary);
+    text-transform: uppercase;
+}
+
+.live-indicator {
+    background: var(--danger);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: blink 1.5s infinite;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Scoreboard */
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-container {
+    text-align: center;
+    flex: 1;
+}
+
+.team-logo {
+    width: 120px;
+    height: 120px;
+    background: var(--primary);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(0, 183, 175, 0.4);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.team-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.score-display {
+    text-align: center;
+    flex: 2;
+}
+
+.current-score {
+    font-size: 6rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(0, 183, 175, 0.3);
+}
+
+.overs {
+    font-size: 2rem;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+}
+
+.target-container {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    background: rgba(0, 183, 175, 0.1);
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--primary);
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.stat-card {
+    background: rgba(16, 24, 31, 0.8);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--primary);
+}
+
+.stat-card h3 {
+    font-size: 1rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.player-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.player-row.active {
+    color: var(--accent);
+}
+
+.player-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.player-row .name {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.player-row .runs, .player-row .wickets {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-left: auto;
+    padding-right: 1rem;
+}
+
+.player-row .balls, .player-row .overs {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+/* Timeline */
+.ball-timeline {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.ball {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ball.wicket { background: var(--danger); }
+.ball.boundary { background: var(--primary); }
+.ball.six { background: var(--accent); color: var(--dark); }
+
+/* Footer Ticker */
+footer {
+    height: 50px;
+    background: rgba(0, 183, 175, 0.2);
+    margin: 2rem -2rem -2rem -2rem;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-top: 1px solid var(--primary);
+}
+
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.ticker {
+    display: flex;
+    white-space: nowrap;
+    padding-right: 100%;
+    animation: ticker 30s linear infinite;
+}
+
+.ticker span {
+    padding: 0 4rem;
+    font-size: 1.1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+    .current-score { font-size: 4rem; }
+    .stats-grid { grid-template-columns: 1fr; }
+}
