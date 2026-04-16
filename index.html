@@ -1,113 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="./manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skoop Football Live</title>
+    <title>Skoop Cricket Live</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="styles.css?v=f00tb4ll">
+    <link rel="stylesheet" href="styles.css?v=cr1ck3t_v1">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json">
 </head>
 <body>
     <div class="app-container">
         <!-- Background Overlay -->
-        <div class="bg-overlay"></div>
+        <div class="bg-overlay" style="background-image: url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1776269985208%2Fassets%2Fcricket_stadium_signage-1776324336482.png');"></div>
 
         <header>
-            <div class="league-logo">
-                <div class="logo-circle"></div>
-                <span>SKOOP PREMIER LEAGUE</span>
+            <div class="league-info">
+                <div class="logo-box">
+                    <span class="logo-text">SKOOP</span>
+                    <span class="logo-sub">CRICKET PREMIER</span>
+                </div>
             </div>
-            <div class="match-meta">
-                <div class="match-half" id="match-half">1ST HALF</div>
-                <div class="match-time" id="match-timer">00:00</div>
+            <div class="match-context">
+                <div class="venue" id="match-venue">Lords, London</div>
+                <div class="match-type" id="match-type">T20 WORLD SERIES</div>
             </div>
-            <div class="live-indicator">LIVE</div>
+            <div class="live-tag">● LIVE</div>
         </header>
 
         <main>
-            <!-- Top Section: Scoreboard -->
-            <section class="scoreboard-section">
-                <div class="team home">
-                    <div class="team-info">
-                        <div class="team-crest" id="home-crest" style="background-color: #e63946;">MC</div>
-                        <h2 class="team-name" id="home-name">METRO CITY</h2>
+            <!-- Scoreboard Section -->
+            <section class="main-scoreboard">
+                <div class="team-block current">
+                    <h2 id="batting-team">TITANS</h2>
+                    <div class="score-display">
+                        <span id="runs">0</span><span class="divider">/</span><span id="wickets">0</span>
                     </div>
-                    <div class="score" id="home-score">0</div>
+                    <div class="overs-display">OVERS <span id="overs">0.0</span> <span class="max-overs">(20)</span></div>
                 </div>
 
-                <div class="vs-divider">
-                    <div class="vs-line"></div>
-                    <div class="vs-text">VS</div>
-                    <div class="vs-line"></div>
+                <div class="match-status-block">
+                    <div class="rr-container">
+                        <div class="rr-item">
+                            <span class="label">CRR</span>
+                            <span class="value" id="crr">0.00</span>
+                        </div>
+                        <div class="rr-item target-mode" id="target-container" style="display: none;">
+                            <span class="label">RRR</span>
+                            <span class="value" id="rrr">0.00</span>
+                        </div>
+                    </div>
+                    <div class="status-message" id="match-status">TITANS WON THE TOSS AND CHOSE TO BAT</div>
                 </div>
 
-                <div class="team away">
-                    <div class="score" id="away-score">0</div>
-                    <div class="team-info">
-                        <div class="team-crest" id="away-crest" style="background-color: #457b9d;">US</div>
-                        <h2 class="team-name" id="away-name">UNITED STARS</h2>
+                <div class="team-block opponent">
+                    <h2 id="bowling-team">DRAGONS</h2>
+                    <div class="target-display" id="target-display" style="opacity: 0.5;">
+                        <span class="label">TARGET</span>
+                        <span class="value" id="target-value">---</span>
                     </div>
                 </div>
             </section>
 
-            <!-- Middle Section: Stats and Events -->
-            <section class="content-grid">
-                <!-- Match Stats -->
-                <div class="card stats-card">
-                    <div class="card-header">
-                        <h3>MATCH STATISTICS</h3>
-                    </div>
-                    <div class="stats-container" id="stats-list">
-                        <!-- Stats will be injected here -->
+            <!-- Stats Grid -->
+            <section class="stats-grid">
+                <!-- Batting Stats -->
+                <div class="card glass">
+                    <div class="card-title">BATTING</div>
+                    <div class="batting-list" id="batting-stats">
+                        <!-- Batting stats injected here -->
                     </div>
                 </div>
 
-                <!-- Live Events / Commentary -->
-                <div class="card events-card">
-                    <div class="card-header">
-                        <h3>LIVE UPDATES</h3>
+                <!-- Last 6 Balls -->
+                <div class="card glass center-card">
+                    <div class="card-title">LAST OVER</div>
+                    <div class="timeline" id="ball-timeline">
+                        <!-- Balls injected here -->
                     </div>
-                    <div class="events-container" id="events-list">
-                        <!-- Events will be injected here -->
+                    <div class="partnership">
+                        <span class="label">PARTNERSHIP</span>
+                        <span class="value" id="partnership-value">0 (0)</span>
                     </div>
                 </div>
 
-                <!-- Recent Scorers -->
-                <div class="card performance-card">
-                    <div class="card-header">
-                        <h3>TOP PERFORMANCE</h3>
-                    </div>
-                    <div class="performance-container" id="performance-list">
-                        <!-- Performance stats will be injected here -->
+                <!-- Bowling Stats -->
+                <div class="card glass">
+                    <div class="card-title">BOWLING</div>
+                    <div class="bowling-list" id="bowling-stats">
+                        <!-- Bowling stats injected here -->
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- Footer: News Ticker -->
         <footer>
-            <div class="ticker-label">BREAKING</div>
-            <div class="ticker-wrapper">
-                <div class="ticker-content" id="news-ticker">
-                    Weather conditions: Perfect for football • Stadium Attendance: 54,200 • Upcoming Match: Lions vs Eagles tomorrow at 20:00 • Welcome to the Skoop Premier League Live Dashboard!
+            <div class="ticker-label">MATCH COMMENTARY</div>
+            <div class="ticker-content-wrapper">
+                <div class="ticker-text" id="commentary-ticker">
+                    Welcome to the Skoop Cricket Premier League! The teams are out on the field. Perfect weather for cricket.
                 </div>
             </div>
         </footer>
     </div>
 
-    <script src="script.js?v=f00tb4ll"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js')
-          .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
-          .catch(function (err) { console.warn('[PWA] SW registration failed:', err); });
-      });
-    }
-  </script>
+    <script src="script.js?v=cr1ck3t_v1"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
+                    .catch(function (err) { console.warn('[PWA] SW registration failed:', err); });
+            });
+        }
+    </script>
 </body>
 </html>

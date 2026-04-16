@@ -3,34 +3,30 @@
     --dark: #10181f;
     --light: #ffffff;
     --secondary: #6a7071;
-    --danger: #ff4757;
-    --warning: #ffa502;
     --glass: rgba(16, 24, 31, 0.85);
-    --glass-light: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent: #ffcc00;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--dark);
-    color: var(--light);
+body, html {
     width: 1920px;
     height: 1080px;
     overflow: hidden;
+    background-color: var(--dark);
+    color: var(--light);
 }
 
 .app-container {
+    position: relative;
     width: 100%;
     height: 100%;
-    background-image: url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1776269985208%2Fassets%2Ffootball_stadium_bg-1776323788632.png');
-    background-size: cover;
-    background-position: center;
-    position: relative;
     display: flex;
     flex-direction: column;
 }
@@ -41,349 +37,339 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, transparent 0%, rgba(16, 24, 31, 0.6) 100%);
-    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.4);
+    z-index: -1;
 }
 
+/* Header Styles */
 header {
-    z-index: 10;
     height: 100px;
-    background: var(--glass);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
     padding: 0 60px;
-    border-bottom: 4px solid var(--primary);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
 }
 
-.league-logo {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 28px;
-    letter-spacing: 2px;
-}
-
-.logo-circle {
-    width: 40px;
-    height: 40px;
-    background: var(--primary);
-    border-radius: 50%;
-    position: relative;
-}
-
-.logo-circle::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    border: 2px solid white;
-    border-radius: 50%;
-}
-
-.match-meta {
+.logo-box {
     display: flex;
     flex-direction: column;
-    align-items: center;
+}
+
+.logo-text {
     font-family: 'Rajdhani', sans-serif;
-}
-
-.match-half {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--primary);
-}
-
-.match-time {
-    font-size: 48px;
+    font-size: 3rem;
     font-weight: 700;
+    color: var(--primary);
     line-height: 1;
 }
 
-.live-indicator {
-    background: var(--danger);
-    padding: 5px 20px;
+.logo-sub {
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.match-context {
+    text-align: center;
+}
+
+.venue {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--light);
+}
+
+.match-type {
+    font-size: 0.9rem;
+    color: var(--primary);
+    margin-top: 4px;
+    letter-spacing: 2px;
+}
+
+.live-tag {
+    background: #e63946;
+    padding: 8px 20px;
     border-radius: 4px;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 1.2rem;
     animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
     0% { opacity: 1; }
-    50% { opacity: 0.5; }
+    50% { opacity: 0.6; }
     100% { opacity: 1; }
 }
 
+/* Main Scoreboard */
 main {
-    z-index: 10;
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 40px 60px;
-    display: flex;
-    flex-direction: column;
     gap: 40px;
 }
 
-.scoreboard-section {
+.main-scoreboard {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 60px;
-}
-
-.team {
-    display: flex;
-    align-items: center;
-    gap: 40px;
+    padding: 40px;
     background: var(--glass);
-    padding: 30px 60px;
     border-radius: 20px;
-    min-width: 600px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
 }
 
-.team.home { flex-direction: row; }
-.team.away { flex-direction: row-reverse; }
-
-.team-info {
+.team-block {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.team-crest {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 900;
-    font-size: 32px;
-    border: 4px solid rgba(255,255,255,0.2);
-}
-
-.team-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    text-align: center;
-}
-
-.score {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 140px;
-    font-weight: 700;
-    color: var(--primary);
-    line-height: 1;
-}
-
-.vs-divider {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 10px;
 }
 
-.vs-line {
-    width: 2px;
-    height: 60px;
-    background: rgba(255,255,255,0.2);
-}
-
-.vs-text {
+.team-block h2 {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 24px;
+    font-size: 3.5rem;
     font-weight: 700;
-    opacity: 0.5;
+    letter-spacing: 2px;
 }
 
-.content-grid {
+.team-block.current h2 {
+    color: var(--primary);
+}
+
+.score-display {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.score-display .divider {
+    color: var(--secondary);
+    margin: 0 10px;
+}
+
+.overs-display {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.overs-display span {
+    color: var(--light);
+}
+
+.match-status-block {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.rr-container {
+    display: flex;
+    gap: 40px;
+}
+
+.rr-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rr-item .label {
+    font-size: 1.2rem;
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.rr-item .value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.status-message {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--light);
+    padding: 10px 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    width: 100%;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.target-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.target-display .label {
+    font-size: 1.2rem;
+    color: var(--secondary);
+}
+
+.target-display .value {
+    font-size: 5rem;
+    font-weight: 700;
+}
+
+/* Stats Grid */
+.stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1.2fr 1fr;
     gap: 30px;
     flex: 1;
 }
 
 .card {
-    background: var(--glass);
+    padding: 30px;
     border-radius: 20px;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255,255,255,0.05);
+    gap: 20px;
 }
 
-.card-header {
-    background: var(--glass-light);
-    padding: 15px 25px;
+.glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+}
+
+.card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
     border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+    letter-spacing: 2px;
 }
 
-.card-header h3 {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.stats-container, .events-container, .performance-container {
-    padding: 20px;
-    flex: 1;
-}
-
-/* Stats Styles */
 .stat-row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 25px;
-}
-
-.stat-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.stat-bar-bg {
-    height: 12px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 6px;
-    overflow: hidden;
-    display: flex;
-}
-
-.stat-bar-home {
-    height: 100%;
-    background: var(--primary);
-    transition: width 0.5s ease-out;
-}
-
-.stat-bar-away {
-    height: 100%;
-    background: var(--secondary);
-    transition: width 0.5s ease-out;
-}
-
-/* Event Styles */
-.event-item {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    display: grid;
+    grid-template-columns: 1.5fr 0.5fr 0.5fr 0.5fr 1fr;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    animation: slideIn 0.5s ease-out;
+    font-size: 1.1rem;
 }
 
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
+.stat-row:last-child {
+    border-bottom: none;
 }
 
-.event-time {
+.stat-row.header {
     font-weight: 700;
-    color: var(--primary);
-    min-width: 45px;
+    color: var(--secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
-.event-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 2px;
-}
+.stat-row .name { font-weight: 600; }
+.stat-row .highlight { color: var(--primary); font-weight: 700; }
 
-.event-icon.goal { background: var(--primary); }
-.event-icon.yellow { background: var(--warning); }
-.event-icon.red { background: var(--danger); }
-
-.event-text {
-    font-size: 16px;
-    line-height: 1.4;
-}
-
-/* Performance Styles */
-.player-row {
-    display: flex;
+.center-card {
     align-items: center;
+    justify-content: space-between;
+}
+
+.timeline {
+    display: flex;
     gap: 15px;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
-.player-photo {
-    width: 50px;
-    height: 50px;
-    background: var(--glass-light);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    border: 2px solid var(--primary);
-}
-
-.player-details {
-    flex: 1;
-}
-
-.player-name {
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.player-team {
-    font-size: 14px;
-    opacity: 0.6;
-}
-
-.player-stat-val {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 24px;
-    color: var(--primary);
-}
-
-footer {
-    z-index: 10;
+.ball {
+    width: 60px;
     height: 60px;
-    background: var(--dark);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
-    border-top: 4px solid var(--primary);
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.ball.wicket { background: #e63946; border-color: #ff4d4d; }
+.ball.boundary-4 { background: #2a9d8f; border-color: #26b9a8; }
+.ball.boundary-6 { background: #00b7af; border-color: #00ffd5; }
+.ball.wide, .ball.noball { background: #f4a261; color: #000; }
+
+.partnership {
+    text-align: center;
+    background: rgba(0, 183, 175, 0.1);
+    padding: 20px 40px;
+    border-radius: 15px;
+    width: 100%;
+}
+
+.partnership .label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.partnership .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Bowling specific grid */
+.bowl-row {
+    grid-template-columns: 1.5fr 0.5fr 0.5fr 0.5fr 1fr;
+}
+
+/* Footer */
+footer {
+    height: 60px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
 }
 
 .ticker-label {
-    background: var(--primary);
-    color: var(--dark);
-    padding: 0 30px;
+    background: var(--dark);
     height: 100%;
     display: flex;
     align-items: center;
-    font-weight: 900;
-    font-size: 20px;
+    padding: 0 30px;
+    font-weight: 700;
+    color: var(--primary);
+    z-index: 2;
 }
 
-.ticker-wrapper {
+.ticker-content-wrapper {
     flex: 1;
     overflow: hidden;
 }
 
-.ticker-content {
+.ticker-text {
     white-space: nowrap;
-    font-size: 20px;
     font-weight: 600;
+    color: var(--dark);
+    font-size: 1.2rem;
     padding-left: 100%;
-    animation: ticker 40s linear infinite;
 }
 
 @keyframes ticker {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-200%); }
+    100% { transform: translateX(-100%); }
 }
