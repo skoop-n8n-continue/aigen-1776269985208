@@ -1,99 +1,199 @@
-const teamA = {
-    name: "TITANS",
-    score: 18,
-    sets: 2,
-    serving: true,
-    stats: [
-        { name: "J. Miller", kills: 14, blocks: 3, aces: 2 },
-        { name: "A. Chen", kills: 11, blocks: 5, aces: 1 }
+/**
+ * Skoop Football Match Simulation Engine
+ * Optimized for Digital Signage
+ */
+
+const matchState = {
+    minutes: 72,
+    seconds: 14,
+    half: 2,
+    homeScore: 1,
+    awayScore: 1,
+    isPaused: false,
+    stoppageTime: 0
+};
+
+const homeTeam = {
+    name: "METRO CITY",
+    short: "MC",
+    possession: 54,
+    shots: 12,
+    shotsOnTarget: 5,
+    corners: 6,
+    fouls: 8,
+    players: [
+        { name: "Marcus V.", goals: 1, rating: 8.2 },
+        { name: "Julian S.", goals: 0, rating: 7.5 },
+        { name: "David L.", goals: 0, rating: 7.1 }
     ]
 };
 
-const teamB = {
-    name: "DRAGONS",
-    score: 15,
-    sets: 1,
-    serving: false,
-    stats: [
-        { name: "S. Rossi", kills: 16, blocks: 2, aces: 3 },
-        { name: "M. Taylor", kills: 9, blocks: 4, aces: 1 }
+const awayTeam = {
+    name: "UNITED STARS",
+    short: "US",
+    possession: 46,
+    shots: 9,
+    shotsOnTarget: 4,
+    corners: 4,
+    fouls: 11,
+    players: [
+        { name: "Leo Rossi", goals: 1, rating: 7.9 },
+        { name: "Kevin D.", goals: 0, rating: 7.4 },
+        { name: "Alex P.", goals: 0, rating: 6.8 }
     ]
 };
 
-const tickerMessages = [
-    "High intensity match at the National Arena!",
-    "Dragons mounting a comeback in the 4th set...",
-    "Titans leading 2 sets to 1.",
-    "J. Miller dominating the net for the Titans.",
-    "Spectacular save by Dragons libero!",
-    "Next point could be crucial for this set."
+const liveEvents = [
+    { time: "12'", type: "yellow", text: "Yellow Card: Julian S. (Metro City)" },
+    { time: "28'", type: "goal", text: "GOAL! Marcus V. scores for Metro City" },
+    { time: "44'", type: "goal", text: "GOAL! Leo Rossi equalizes for United Stars" },
+    { time: "58'", type: "yellow", text: "Yellow Card: Alex P. (United Stars)" },
+    { time: "65'", type: "substitution", text: "Substitution: Kevin D. replaced by Sam T." }
 ];
 
-function updateUI() {
-    document.getElementById('score-a').textContent = teamA.score;
-    document.getElementById('score-b').textContent = teamB.score;
+const newsTicker = [
+    "Metro City looking for a winner in the final 20 minutes...",
+    "United Stars defense holding strong under pressure.",
+    "Stadium Attendance: 54,200 tonight at Skoop Arena.",
+    "Next Match: Lions vs Eagles - Tomorrow 20:00 LIVE.",
+    "Player of the Month nominations are now open on the app.",
+    "Perfect conditions for football: 18°C, Clear Skies."
+];
 
-    document.getElementById('serve-a').textContent = teamA.serving ? '●' : '';
-    document.getElementById('serve-b').textContent = teamB.serving ? '●' : '';
+function formatTime(min, sec) {
+    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+}
 
-    const statsGrid = document.getElementById('stats-grid');
-    statsGrid.innerHTML = '';
+function updateScoreboard() {
+    document.getElementById('home-score').textContent = matchState.homeScore;
+    document.getElementById('away-score').textContent = matchState.awayScore;
+    document.getElementById('match-timer').textContent = formatTime(matchState.minutes, matchState.seconds);
+    document.getElementById('match-half').textContent = matchState.half === 1 ? '1ST HALF' : '2ND HALF';
+}
 
-    const allStats = [
-        ...teamA.stats.map(s => ({ ...s, team: 'Titans' })),
-        ...teamB.stats.map(s => ({ ...s, team: 'Dragons' }))
+function updateStats() {
+    const statsList = document.getElementById('stats-list');
+    const stats = [
+        { label: 'POSSESSION', home: homeTeam.possession, away: awayTeam.possession, unit: '%' },
+        { label: 'SHOTS', home: homeTeam.shots, away: awayTeam.shots, unit: '' },
+        { label: 'ON TARGET', home: homeTeam.shotsOnTarget, away: awayTeam.shotsOnTarget, unit: '' },
+        { label: 'CORNERS', home: homeTeam.corners, away: awayTeam.corners, unit: '' }
     ];
 
-    allStats.forEach(stat => {
-        const div = document.createElement('div');
-        div.className = 'stat-item';
-        div.innerHTML = `
-            <div>
-                <div class="stat-player">${stat.name}</div>
-                <div class="stat-label">${stat.team}</div>
+    statsList.innerHTML = stats.map(s => `
+        <div class="stat-row">
+            <div class="stat-labels">
+                <span>${s.home}${s.unit}</span>
+                <span>${s.label}</span>
+                <span>${s.away}${s.unit}</span>
             </div>
-            <div class="stat-value">${stat.kills} <span style="font-size:12px; opacity:0.6">KILLS</span></div>
-        `;
-        statsGrid.appendChild(div);
-    });
+            <div class="stat-bar-bg">
+                <div class="stat-bar-home" style="width: ${(s.home / (s.home + s.away)) * 100}%"></div>
+                <div class="stat-bar-away" style="width: ${(s.away / (s.home + s.away)) * 100}%"></div>
+            </div>
+        </div>
+    `).join('');
 }
 
-function simulateMatch() {
-    // Randomly award point
-    const winner = Math.random() > 0.45 ? teamA : teamB;
-    winner.score++;
-
-    // Switch serve if necessary
-    if (!winner.serving) {
-        teamA.serving = !teamA.serving;
-        teamB.serving = !teamB.serving;
-    }
-
-    // Update stats randomly
-    if (Math.random() > 0.7) {
-        const player = winner.stats[Math.floor(Math.random() * winner.stats.length)];
-        player.kills++;
-    }
-
-    // Check for set win
-    if (winner.score >= 25 && (winner.score - (winner === teamA ? teamB.score : teamA.score) >= 2)) {
-        winner.sets++;
-        teamA.score = 0;
-        teamB.score = 0;
-    }
-
-    updateUI();
+function updateEvents() {
+    const eventsList = document.getElementById('events-list');
+    eventsList.innerHTML = liveEvents.slice(-5).reverse().map(e => `
+        <div class="event-item">
+            <div class="event-time">${e.time}</div>
+            <div class="event-text">${e.text}</div>
+        </div>
+    `).join('');
 }
 
-// Initial update
-updateUI();
+function updatePerformance() {
+    const perfList = document.getElementById('performance-list');
+    const allPlayers = [
+        ...homeTeam.players.map(p => ({ ...p, team: homeTeam.name })),
+        ...awayTeam.players.map(p => ({ ...p, team: awayTeam.name }))
+    ].sort((a, b) => b.rating - a.rating);
 
-// Run simulation every 5 seconds
-setInterval(simulateMatch, 5000);
+    perfList.innerHTML = allPlayers.slice(0, 4).map(p => `
+        <div class="player-row">
+            <div class="player-photo">${p.name[0]}</div>
+            <div class="player-details">
+                <div class="player-name">${p.name}</div>
+                <div class="player-team">${p.team}</div>
+            </div>
+            <div class="player-stat-val">${p.rating}</div>
+        </div>
+    `).join('');
+}
 
-// Rotate ticker text every 15 seconds
+function simulateStep() {
+    if (matchState.isPaused) return;
+
+    // Advance clock
+    matchState.seconds++;
+    if (matchState.seconds >= 60) {
+        matchState.seconds = 0;
+        matchState.minutes++;
+    }
+
+    // Full match ends
+    if (matchState.minutes >= 90 && matchState.half === 2) {
+        matchState.isPaused = true;
+        addEvent("90'", "Full Time: 1-1 Draw");
+    }
+
+    // Random events simulation (lower frequency)
+    const rand = Math.random();
+
+    // Stats fluctuation
+    if (rand > 0.95) {
+        homeTeam.possession = Math.max(40, Math.min(60, homeTeam.possession + (Math.random() > 0.5 ? 1 : -1)));
+        awayTeam.possession = 100 - homeTeam.possession;
+        updateStats();
+    }
+
+    if (rand > 0.98) {
+        const team = Math.random() > 0.5 ? homeTeam : awayTeam;
+        team.shots++;
+        if (Math.random() > 0.6) team.shotsOnTarget++;
+        updateStats();
+    }
+
+    // Rare game changing events
+    if (rand > 0.998) {
+        const team = Math.random() > 0.5 ? "home" : "away";
+        if (team === "home") {
+            matchState.homeScore++;
+            addEvent(`${matchState.minutes}'`, `GOAL! Dramatic lead for ${homeTeam.name}!`);
+            homeTeam.players[0].goals++;
+            homeTeam.players[0].rating += 0.5;
+        } else {
+            matchState.awayScore++;
+            addEvent(`${matchState.minutes}'`, `GOAL! ${awayTeam.name} take the lead!`);
+            awayTeam.players[0].goals++;
+            awayTeam.players[0].rating += 0.5;
+        }
+        updatePerformance();
+    }
+
+    updateScoreboard();
+}
+
+function addEvent(time, text) {
+    liveEvents.push({ time, text });
+    updateEvents();
+}
+
+// Initial Render
+updateScoreboard();
+updateStats();
+updateEvents();
+updatePerformance();
+
+// Start Simulation
+setInterval(simulateStep, 1000); // 1 sec real time = 1 sec game time for visual effect
+
+// Ticker rotation
 let tickerIndex = 0;
 setInterval(() => {
-    tickerIndex = (tickerIndex + 1) % tickerMessages.length;
-    document.getElementById('ticker-text').textContent = tickerMessages[tickerIndex];
-}, 15000);
+    tickerIndex = (tickerIndex + 1) % newsTicker.length;
+    document.getElementById('news-ticker').textContent = newsTicker[tickerIndex];
+}, 10000);

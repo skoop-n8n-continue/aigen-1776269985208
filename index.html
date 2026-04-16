@@ -1,69 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="./manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volleyball Live Dashboard</title>
-    <!-- Cache Control -->
+    <title>Skoop Football Live</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-
-    <link rel="stylesheet" href="styles.css?v=v1b2c3">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=f00tb4ll">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <div class="overlay"></div>
+        <!-- Background Overlay -->
+        <div class="bg-overlay"></div>
 
-        <header class="match-header">
-            <div class="league-info">PRO VOLLEYBALL CHAMPIONSHIP</div>
-            <div class="match-status">SET 4 - LIVE</div>
+        <header>
+            <div class="league-logo">
+                <div class="logo-circle"></div>
+                <span>SKOOP PREMIER LEAGUE</span>
+            </div>
+            <div class="match-meta">
+                <div class="match-half" id="match-half">1ST HALF</div>
+                <div class="match-time" id="match-timer">00:00</div>
+            </div>
+            <div class="live-indicator">LIVE</div>
         </header>
 
-        <main class="scoreboard">
-            <div class="team team-a">
-                <div class="team-name">TITANS</div>
-                <div class="sets">2</div>
-                <div class="current-score" id="score-a">18</div>
-                <div class="serve-indicator" id="serve-a">●</div>
-            </div>
+        <main>
+            <!-- Top Section: Scoreboard -->
+            <section class="scoreboard-section">
+                <div class="team home">
+                    <div class="team-info">
+                        <div class="team-crest" id="home-crest" style="background-color: #e63946;">MC</div>
+                        <h2 class="team-name" id="home-name">METRO CITY</h2>
+                    </div>
+                    <div class="score" id="home-score">0</div>
+                </div>
 
-            <div class="score-divider">VS</div>
+                <div class="vs-divider">
+                    <div class="vs-line"></div>
+                    <div class="vs-text">VS</div>
+                    <div class="vs-line"></div>
+                </div>
 
-            <div class="team team-b">
-                <div class="serve-indicator" id="serve-b"></div>
-                <div class="current-score" id="score-b">15</div>
-                <div class="sets">1</div>
-                <div class="team-name">DRAGONS</div>
-            </div>
+                <div class="team away">
+                    <div class="score" id="away-score">0</div>
+                    <div class="team-info">
+                        <div class="team-crest" id="away-crest" style="background-color: #457b9d;">US</div>
+                        <h2 class="team-name" id="away-name">UNITED STARS</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Middle Section: Stats and Events -->
+            <section class="content-grid">
+                <!-- Match Stats -->
+                <div class="card stats-card">
+                    <div class="card-header">
+                        <h3>MATCH STATISTICS</h3>
+                    </div>
+                    <div class="stats-container" id="stats-list">
+                        <!-- Stats will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Live Events / Commentary -->
+                <div class="card events-card">
+                    <div class="card-header">
+                        <h3>LIVE UPDATES</h3>
+                    </div>
+                    <div class="events-container" id="events-list">
+                        <!-- Events will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Recent Scorers -->
+                <div class="card performance-card">
+                    <div class="card-header">
+                        <h3>TOP PERFORMANCE</h3>
+                    </div>
+                    <div class="performance-container" id="performance-list">
+                        <!-- Performance stats will be injected here -->
+                    </div>
+                </div>
+            </section>
         </main>
 
-        <section class="stats-container">
-            <div class="stats-card">
-                <h3>MATCH LEADERS</h3>
-                <div class="stats-grid" id="stats-grid">
-                    <!-- Dynamic stats will be injected here -->
+        <!-- Footer: News Ticker -->
+        <footer>
+            <div class="ticker-label">BREAKING</div>
+            <div class="ticker-wrapper">
+                <div class="ticker-content" id="news-ticker">
+                    Weather conditions: Perfect for football • Stadium Attendance: 54,200 • Upcoming Match: Lions vs Eagles tomorrow at 20:00 • Welcome to the Skoop Premier League Live Dashboard!
                 </div>
-            </div>
-        </section>
-
-        <footer class="ticker">
-            <div class="ticker-content" id="ticker-text">
-                TITANS lead 2-1 in sets... Dragons fighting back in the 4th set... Latest Point: Spike by J. Miller (Titans)...
             </div>
         </footer>
     </div>
-    <script src="script.js?v=v1b2c3"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js')
-          .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
-          .catch(function (err) { console.warn('[PWA] SW registration failed:', err); });
-      });
-    }
-  </script>
+
+    <script src="script.js?v=f00tb4ll"></script>
 </body>
 </html>
