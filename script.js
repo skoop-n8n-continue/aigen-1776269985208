@@ -1,124 +1,99 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Game State
-    const state = {
-        runs: 184,
-        wickets: 3,
-        overs: 24,
-        balls: 2,
-        batter1: { name: 'Virat Kohli', runs: 82, balls: 54 },
-        batter2: { name: 'Hardik Pandya', runs: 12, balls: 8 },
-        bowler: { name: 'Pat Cummins', runs: 42, wickets: 1, overs: 5, balls: 2 },
-        recentBalls: ['1', '4', '0', 'W', '1', '6'],
-        crr: 7.60
-    };
+const teamA = {
+    name: "TITANS",
+    score: 18,
+    sets: 2,
+    serving: true,
+    stats: [
+        { name: "J. Miller", kills: 14, blocks: 3, aces: 2 },
+        { name: "A. Chen", kills: 11, blocks: 5, aces: 1 }
+    ]
+};
 
-    // DOM Elements
-    const elements = {
-        score: document.getElementById('score'),
-        overs: document.getElementById('overs'),
-        crr: document.getElementById('crr'),
-        batter1Runs: document.getElementById('batter1-runs'),
-        batter1Balls: document.getElementById('batter1-balls'),
-        batter2Runs: document.getElementById('batter2-runs'),
-        batter2Balls: document.getElementById('batter2-balls'),
-        bowlerStats: document.getElementById('bowler-stats'),
-        bowlerOvers: document.getElementById('bowler-overs'),
-        recentBalls: document.getElementById('recent-balls'),
-        newsTicker: document.getElementById('news-ticker')
-    };
+const teamB = {
+    name: "DRAGONS",
+    score: 15,
+    sets: 1,
+    serving: false,
+    stats: [
+        { name: "S. Rossi", kills: 16, blocks: 2, aces: 3 },
+        { name: "M. Taylor", kills: 9, blocks: 4, aces: 1 }
+    ]
+};
 
-    function updateUI() {
-        elements.score.textContent = `${state.runs}/${state.wickets}`;
-        elements.overs.textContent = `(${state.overs}.${state.balls})`;
-        elements.crr.textContent = state.crr.toFixed(2);
+const tickerMessages = [
+    "High intensity match at the National Arena!",
+    "Dragons mounting a comeback in the 4th set...",
+    "Titans leading 2 sets to 1.",
+    "J. Miller dominating the net for the Titans.",
+    "Spectacular save by Dragons libero!",
+    "Next point could be crucial for this set."
+];
 
-        elements.batter1Runs.textContent = `${state.batter1.runs}*`;
-        elements.batter1Balls.textContent = `(${state.batter1.balls})`;
+function updateUI() {
+    document.getElementById('score-a').textContent = teamA.score;
+    document.getElementById('score-b').textContent = teamB.score;
 
-        elements.batter2Runs.textContent = `${state.batter2.runs}`;
-        elements.batter2Balls.textContent = `(${state.batter2.balls})`;
+    document.getElementById('serve-a').textContent = teamA.serving ? '●' : '';
+    document.getElementById('serve-b').textContent = teamB.serving ? '●' : '';
 
-        elements.bowlerStats.textContent = `${state.bowler.wickets}-${state.bowler.runs}`;
-        elements.bowlerOvers.textContent = `(${state.bowler.overs}.${state.bowler.balls})`;
+    const statsGrid = document.getElementById('stats-grid');
+    statsGrid.innerHTML = '';
 
-        // Update Timeline
-        elements.recentBalls.innerHTML = '';
-        state.recentBalls.forEach(ball => {
-            const ballEl = document.createElement('div');
-            ballEl.className = 'ball';
-            if (ball === 'W') ballEl.classList.add('wicket');
-            if (ball === '4') ballEl.classList.add('boundary');
-            if (ball === '6') ballEl.classList.add('six');
-            ballEl.textContent = ball;
-            elements.recentBalls.appendChild(ballEl);
-        });
+    const allStats = [
+        ...teamA.stats.map(s => ({ ...s, team: 'Titans' })),
+        ...teamB.stats.map(s => ({ ...s, team: 'Dragons' }))
+    ];
+
+    allStats.forEach(stat => {
+        const div = document.createElement('div');
+        div.className = 'stat-item';
+        div.innerHTML = `
+            <div>
+                <div class="stat-player">${stat.name}</div>
+                <div class="stat-label">${stat.team}</div>
+            </div>
+            <div class="stat-value">${stat.kills} <span style="font-size:12px; opacity:0.6">KILLS</span></div>
+        `;
+        statsGrid.appendChild(div);
+    });
+}
+
+function simulateMatch() {
+    // Randomly award point
+    const winner = Math.random() > 0.45 ? teamA : teamB;
+    winner.score++;
+
+    // Switch serve if necessary
+    if (!winner.serving) {
+        teamA.serving = !teamA.serving;
+        teamB.serving = !teamB.serving;
     }
 
-    function simulateBall() {
-        // Random outcome
-        const outcomes = ['0', '1', '2', '4', '6', 'W', '1', '0', '1'];
-        const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-
-        // Update balls
-        state.balls++;
-        state.bowler.balls++;
-        if (state.balls > 5) {
-            state.balls = 0;
-            state.overs++;
-        }
-        if (state.bowler.balls > 5) {
-            state.bowler.balls = 0;
-            state.bowler.overs++;
-        }
-
-        // Update outcome
-        if (outcome === 'W') {
-            state.wickets++;
-            state.bowler.wickets++;
-            // Reset "out" batter
-            state.batter1.runs = 0;
-            state.batter1.balls = 0;
-        } else {
-            const runs = parseInt(outcome) || 0;
-            state.runs += runs;
-            state.batter1.runs += runs;
-            state.batter1.balls++;
-            state.bowler.runs += runs;
-        }
-
-        // Update Timeline
-        state.recentBalls.push(outcome);
-        if (state.recentBalls.length > 8) {
-            state.recentBalls.shift();
-        }
-
-        // Update CRR
-        const totalBalls = state.overs * 6 + state.balls;
-        if (totalBalls > 0) {
-            state.crr = (state.runs / totalBalls) * 6;
-        }
-
-        updateUI();
-
-        // Add excitement to news ticker if it's a boundary
-        if (outcome === '4' || outcome === '6') {
-            addNews(`SHOCKWAVE! ${state.batter1.name} hits a massive ${outcome}! The crowd is going wild!`);
-        }
+    // Update stats randomly
+    if (Math.random() > 0.7) {
+        const player = winner.stats[Math.floor(Math.random() * winner.stats.length)];
+        player.kills++;
     }
 
-    function addNews(text) {
-        const span = document.createElement('span');
-        span.textContent = text;
-        elements.newsTicker.prepend(span);
-        // Limit ticker items
-        if (elements.newsTicker.children.length > 10) {
-            elements.newsTicker.lastElementChild.remove();
-        }
+    // Check for set win
+    if (winner.score >= 25 && (winner.score - (winner === teamA ? teamB.score : teamA.score) >= 2)) {
+        winner.sets++;
+        teamA.score = 0;
+        teamB.score = 0;
     }
 
-    // Initial Render
     updateUI();
+}
 
-    // Simulation Loop (Every 4 seconds a ball is bowled)
-    setInterval(simulateBall, 4000);
-});
+// Initial update
+updateUI();
+
+// Run simulation every 5 seconds
+setInterval(simulateMatch, 5000);
+
+// Rotate ticker text every 15 seconds
+let tickerIndex = 0;
+setInterval(() => {
+    tickerIndex = (tickerIndex + 1) % tickerMessages.length;
+    document.getElementById('ticker-text').textContent = tickerMessages[tickerIndex];
+}, 15000);
