@@ -1,222 +1,187 @@
 /**
- * Skoop Cricket Match Simulation Engine
+ * Skoop Tennis Match Simulation Engine
  * Optimized for Digital Signage
  */
 
 const state = {
-    battingTeam: "TITANS",
-    bowlingTeam: "DRAGONS",
-    runs: 0,
-    wickets: 0,
-    overs: 0,
-    ballsInOver: 0,
-    maxOvers: 20,
-    target: null,
-    isFirstInnings: true,
-    matchStatus: "TITANS WON THE TOSS AND CHOSE TO BAT",
-    last6Balls: [],
-    partnership: { runs: 0, balls: 0 },
-    batters: [
-        { name: "A. Sharma", runs: 0, balls: 0, fours: 0, sixes: 0, active: true },
-        { name: "J. Root", runs: 0, balls: 0, fours: 0, sixes: 0, active: true }
+    players: [
+        {
+            name: "C. ALCARAZ",
+            country: "ESP",
+            sets: 0,
+            games: [0],
+            points: 0,
+            stats: { aces: 0, winners: 0, fsrv: 0, fsrvTotal: 0, ue: 0 }
+        },
+        {
+            name: "J. SINNER",
+            country: "ITA",
+            sets: 0,
+            games: [0],
+            points: 0,
+            stats: { aces: 0, winners: 0, fsrv: 0, fsrvTotal: 0, ue: 0 }
+        }
     ],
-    bowler: { name: "M. Starc", overs: 0, maidens: 0, runs: 0, wickets: 0 },
-    commentary: [
-        "Welcome to the Skoop Cricket Premier League!",
-        "The players are taking their positions.",
-        "Beautiful evening for a cricket match."
-    ]
+    serverIndex: 0,
+    setIndex: 0,
+    matchTime: 0,
+    events: ["Match Started"]
 };
 
-const teams = {
-    TITANS: ["A. Sharma", "J. Root", "V. Kohli", "B. Stokes", "G. Maxwell", "R. Pant", "R. Jadeja", "P. Cummins", "R. Khan", "J. Bumrah", "M. Shami"],
-    DRAGONS: ["Q. de Kock", "D. Warner", "S. Smith", "K. Williamson", "N. Pooran", "H. Pandya", "A. Russell", "M. Starc", "K. Rabada", "T. Boult", "A. Zampa"]
-};
+const pointValues = [0, 15, 30, 40, "AD"];
 
-function updateUI() {
-    document.getElementById('batting-team').textContent = state.battingTeam;
-    document.getElementById('bowling-team').textContent = state.bowlingTeam;
-    document.getElementById('runs').textContent = state.runs;
-    document.getElementById('wickets').textContent = state.wickets;
-    document.getElementById('overs').textContent = `${state.overs}.${state.ballsInOver}`;
-
-    const crr = state.overs === 0 && state.ballsInOver === 0 ? "0.00" : (state.runs / (state.overs + state.ballsInOver / 6)).toFixed(2);
-    document.getElementById('crr').textContent = crr;
-
-    if (!state.isFirstInnings) {
-        document.getElementById('target-container').style.display = 'flex';
-        document.getElementById('target-display').style.opacity = '1';
-        document.getElementById('target-value').textContent = state.target;
-
-        const remainingBalls = (state.maxOvers * 6) - (state.overs * 6 + state.ballsInOver);
-        const runsNeeded = state.target - state.runs;
-        const rrr = remainingBalls <= 0 ? "0.00" : ((runsNeeded / remainingBalls) * 6).toFixed(2);
-        document.getElementById('rrr').textContent = rrr;
-    }
-
-    document.getElementById('match-status').textContent = state.matchStatus;
-    document.getElementById('partnership-value').textContent = `${state.partnership.runs} (${state.partnership.balls})`;
-
-    // Update Batting Stats
-    const battingList = document.getElementById('batting-stats');
-    battingList.innerHTML = `
-        <div class="stat-row header">
-            <div class="name">BATTER</div>
-            <div>R</div>
-            <div>B</div>
-            <div>4s</div>
-            <div>6s</div>
-            <div>SR</div>
-        </div>
-    ` + state.batters.map(b => `
-        <div class="stat-row">
-            <div class="name ${b.active ? 'highlight' : ''}">${b.name}${b.active ? '*' : ''}</div>
-            <div class="highlight">${b.runs}</div>
-            <div>${b.balls}</div>
-            <div>${b.fours}</div>
-            <div>${b.sixes}</div>
-            <div>${b.balls === 0 ? '0.0' : ((b.runs / b.balls) * 100).toFixed(1)}</div>
-        </div>
-    `).join('');
-
-    // Update Bowling Stats
-    const bowlingList = document.getElementById('bowling-stats');
-    bowlingList.innerHTML = `
-        <div class="stat-row header bowl-row">
-            <div class="name">BOWLER</div>
-            <div>O</div>
-            <div>M</div>
-            <div>R</div>
-            <div>W</div>
-            <div>ECON</div>
-        </div>
-        <div class="stat-row bowl-row">
-            <div class="name highlight">${state.bowler.name}</div>
-            <div>${state.bowler.overs}</div>
-            <div>${state.bowler.maidens}</div>
-            <div class="highlight">${state.bowler.runs}</div>
-            <div class="highlight">${state.bowler.wickets}</div>
-            <div>${state.bowler.overs === 0 ? '0.00' : (state.bowler.runs / state.bowler.overs).toFixed(2)}</div>
-        </div>
-    `;
-
-    // Update Timeline
-    const timeline = document.getElementById('ball-timeline');
-    timeline.innerHTML = state.last6Balls.map(b => {
-        let cls = '';
-        if (b === 'W') cls = 'wicket';
-        else if (b === 4) cls = 'boundary-4';
-        else if (b === 6) cls = 'boundary-6';
-        else if (b === 'Wd' || b === 'Nb') cls = 'wide';
-        return `<div class="ball ${cls}">${b}</div>`;
-    }).join('');
-
-    // Update Ticker
-    const ticker = document.getElementById('commentary-ticker');
-    ticker.textContent = state.commentary.join(' • ');
-    ticker.style.animation = 'none';
-    ticker.offsetHeight; // trigger reflow
-    ticker.style.animation = `ticker ${state.commentary.join(' • ').length * 0.2}s linear infinite`;
+function formatTime(seconds) {
+    const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
 }
 
-function simulateBall() {
-    if (state.matchStatus.includes("WIN") || state.matchStatus.includes("DRAW")) return;
+function updateUI() {
+    // Header
+    document.getElementById('match-time').textContent = formatTime(state.matchTime);
 
-    const outcomes = [0, 1, 2, 3, 4, 6, 'W', 0, 1, 1, 2, 0, 'Wd', 0, 1];
-    let result = outcomes[Math.floor(Math.random() * outcomes.length)];
+    // Scoreboard
+    state.players.forEach((player, i) => {
+        const pNum = i + 1;
+        document.getElementById(`p${pNum}-sets`).textContent = player.sets;
+        document.getElementById(`p${pNum}-points`).textContent = typeof player.points === 'number' ? pointValues[player.points] : player.points;
+        document.getElementById(`p${pNum}-serve`).textContent = state.serverIndex === i ? '🎾' : '';
 
-    // Logic adjustments for chase
-    if (!state.isFirstInnings) {
-        const runsNeeded = state.target - state.runs;
-        if (runsNeeded < 10) outcomes.push(1, 1, 1, 0, 0); // more cautious
-        if (runsNeeded > 30) outcomes.push(4, 6, 'W'); // risky
-    }
+        const gamesContainer = document.getElementById(`p${pNum}-games`);
+        gamesContainer.innerHTML = player.games.map((g, idx) => {
+            const isCurrent = idx === state.setIndex;
+            return `<span class="game-score ${isCurrent ? 'current' : 'past'}">${g}</span>`;
+        }).join('');
 
-    state.last6Balls.push(result);
-    if (state.last6Balls.length > 6) state.last6Balls.shift();
+        // Stats
+        document.getElementById(`p${pNum}-aces`).textContent = player.stats.aces;
+        document.getElementById(`p${pNum}-winners`).textContent = player.stats.winners;
+        document.getElementById(`p${pNum}-ue`).textContent = player.stats.ue;
 
-    const activeBatter = state.batters[0]; // Simple logic: first batter is on strike
+        const fsrvPerc = player.stats.fsrvTotal === 0 ? 0 : Math.round((player.stats.fsrv / player.stats.fsrvTotal) * 100);
+        document.getElementById(`p${pNum}-fsrv`).textContent = `${fsrvPerc}%`;
 
-    if (result === 'W') {
-        state.wickets++;
-        state.bowler.wickets++;
-        state.partnership = { runs: 0, balls: 0 };
-        state.commentary.unshift(`OUT! ${activeBatter.name} is gone!`);
+        // Bars
+        const otherPlayer = state.players[1 - i];
+        const aceTotal = player.stats.aces + otherPlayer.stats.aces;
+        document.getElementById(`p1-aces-bar`).style.width = aceTotal === 0 ? '50%' : `${(state.players[0].stats.aces / aceTotal) * 100}%`;
+        document.getElementById(`p2-aces-bar`).style.width = aceTotal === 0 ? '50%' : `${(state.players[1].stats.aces / aceTotal) * 100}%`;
 
-        if (state.wickets >= 10) {
-            endInnings();
-        } else {
-            const nextBatterName = teams[state.battingTeam][state.wickets + 1] || "Tailender";
-            state.batters[0] = { name: nextBatterName, runs: 0, balls: 0, fours: 0, sixes: 0, active: true };
-        }
-    } else if (result === 'Wd' || result === 'Nb') {
-        state.runs += 1;
-        state.bowler.runs += 1;
-        // Ball doesn't count towards over
+        const winnerTotal = player.stats.winners + otherPlayer.stats.winners;
+        document.getElementById(`p1-winners-bar`).style.width = winnerTotal === 0 ? '50%' : `${(state.players[0].stats.winners / winnerTotal) * 100}%`;
+        document.getElementById(`p2-winners-bar`).style.width = winnerTotal === 0 ? '50%' : `${(state.players[1].stats.winners / winnerTotal) * 100}%`;
+
+        const ueTotal = player.stats.ue + otherPlayer.stats.ue;
+        document.getElementById(`p1-ue-bar`).style.width = ueTotal === 0 ? '50%' : `${(state.players[0].stats.ue / ueTotal) * 100}%`;
+        document.getElementById(`p2-ue-bar`).style.width = ueTotal === 0 ? '50%' : `${(state.players[1].stats.ue / ueTotal) * 100}%`;
+
+        const fsrvP1 = state.players[0].stats.fsrvTotal === 0 ? 0 : (state.players[0].stats.fsrv / state.players[0].stats.fsrvTotal);
+        const fsrvP2 = state.players[1].stats.fsrvTotal === 0 ? 0 : (state.players[1].stats.fsrv / state.players[1].stats.fsrvTotal);
+        const fsrvTotal = fsrvP1 + fsrvP2;
+        document.getElementById(`p1-fsrv-bar`).style.width = fsrvTotal === 0 ? '50%' : `${(fsrvP1 / fsrvTotal) * 100}%`;
+        document.getElementById(`p2-fsrv-bar`).style.width = fsrvTotal === 0 ? '50%' : `${(fsrvP2 / fsrvTotal) * 100}%`;
+    });
+
+    // Events
+    const logContainer = document.getElementById('event-log');
+    logContainer.innerHTML = state.events.slice(-5).reverse().map(e => `<div class="event-item">${e}</div>`).join('');
+}
+
+function addEvent(msg) {
+    state.events.push(msg);
+}
+
+function simulatePoint() {
+    state.matchTime += 15; // Simulate time passing
+
+    const winnerIndex = Math.random() > 0.5 ? 0 : 1;
+    const loserIndex = 1 - winnerIndex;
+    const winner = state.players[winnerIndex];
+    const loser = state.players[loserIndex];
+
+    // Determine type of point
+    const rand = Math.random();
+    if (rand < 0.1) {
+        winner.stats.aces++;
+        winner.stats.winners++;
+        addEvent(`Ace by ${winner.name}`);
+    } else if (rand < 0.3) {
+        winner.stats.winners++;
+        addEvent(`Winner by ${winner.name}`);
+    } else if (rand < 0.5) {
+        loser.stats.ue++;
+        addEvent(`Unforced error by ${loser.name}`);
     } else {
-        state.runs += result;
-        state.bowler.runs += result;
-        state.partnership.runs += result;
-        state.partnership.balls += 1;
-        activeBatter.runs += result;
-        activeBatter.balls += 1;
-        if (result === 4) activeBatter.fours++;
-        if (result === 6) activeBatter.sixes++;
-
-        state.ballsInOver++;
-        if (state.ballsInOver >= 6) {
-            state.overs++;
-            state.ballsInOver = 0;
-            state.bowler.overs++;
-            if (state.overs >= state.maxOvers) {
-                endInnings();
-            }
-        }
-
-        // Swap strike on odd runs (simple simulation)
-        if (result % 2 !== 0) {
-            state.batters.reverse();
-        }
+        addEvent(`Point for ${winner.name}`);
     }
 
-    if (!state.isFirstInnings && state.runs >= state.target) {
-        state.matchStatus = `${state.battingTeam} WON BY ${10 - state.wickets} WICKETS`;
-        state.commentary.unshift(`Victory for ${state.battingTeam}! Incredible run chase.`);
+    // Serve stats (server is winner or loser)
+    const server = state.players[state.serverIndex];
+    server.stats.fsrvTotal++;
+    if (Math.random() > 0.3) server.stats.fsrv++;
+
+    // Scoring logic
+    if (winner.points === 3 && loser.points < 3) {
+        // Winner wins game
+        winGame(winnerIndex);
+    } else if (winner.points === 3 && loser.points === 3) {
+        // Deuce to Ad
+        winner.points = "AD";
+    } else if (winner.points === "AD") {
+        // Ad to game
+        winGame(winnerIndex);
+    } else if (loser.points === "AD") {
+        // Opponent Ad back to Deuce
+        loser.points = 3;
+    } else {
+        winner.points++;
     }
 
-    if (state.commentary.length > 10) state.commentary.pop();
     updateUI();
 }
 
-function endInnings() {
-    if (state.isFirstInnings) {
-        state.target = state.runs + 1;
-        state.isFirstInnings = false;
-        const prevBatting = state.battingTeam;
-        state.battingTeam = state.bowlingTeam;
-        state.bowlingTeam = prevBatting;
-        state.runs = 0;
-        state.wickets = 0;
-        state.overs = 0;
-        state.ballsInOver = 0;
-        state.last6Balls = [];
-        state.partnership = { runs: 0, balls: 0 };
-        state.batters = [
-            { name: teams[state.battingTeam][0], runs: 0, balls: 0, fours: 0, sixes: 0, active: true },
-            { name: teams[state.battingTeam][1], runs: 0, balls: 0, fours: 0, sixes: 0, active: true }
-        ];
-        state.bowler = { name: teams[state.bowlingTeam][7], overs: 0, maidens: 0, runs: 0, wickets: 0 };
-        state.matchStatus = `${state.battingTeam} NEEDS ${state.target} TO WIN`;
-        state.commentary.unshift(`Innings Break. ${state.battingTeam} need ${state.target} runs to win.`);
+function winGame(playerIndex) {
+    state.players[0].points = 0;
+    state.players[1].points = 0;
+    state.players[playerIndex].games[state.setIndex]++;
+
+    addEvent(`Game ${state.players[playerIndex].name}`);
+
+    const games1 = state.players[0].games[state.setIndex];
+    const games2 = state.players[1].games[state.setIndex];
+
+    // Win Set logic
+    if ((games1 >= 6 || games2 >= 6) && Math.abs(games1 - games2) >= 2) {
+        winSet(playerIndex);
+    } else if (games1 === 6 && games2 === 6) {
+        // Tiebreak simulation (simplified: next point wins set)
+        winSet(playerIndex);
+    }
+
+    // Swap server
+    state.serverIndex = 1 - state.serverIndex;
+}
+
+function winSet(playerIndex) {
+    state.players[playerIndex].sets++;
+    addEvent(`Set ${state.players[playerIndex].name}`);
+
+    if (state.players[playerIndex].sets === 2) {
+        addEvent(`MATCH POINT: ${state.players[playerIndex].name}`);
+        // In reality, match would end, but for signage we'll just reset after a bit
+        setTimeout(() => location.reload(), 10000);
     } else {
-        if (state.runs < state.target - 1) {
-            state.matchStatus = `${state.bowlingTeam} WON BY ${state.target - 1 - state.runs} RUNS`;
-        } else if (state.runs === state.target - 1) {
-            state.matchStatus = "MATCH TIED";
-        }
+        state.setIndex++;
+        state.players[0].games.push(0);
+        state.players[1].games.push(0);
     }
 }
 
-// Start simulation
+// Initialize and start
 updateUI();
-setInterval(simulateBall, 4000); // New ball every 4 seconds
+setInterval(simulatePoint, 5000); // Point every 5 seconds
+setInterval(() => {
+    state.matchTime++;
+    document.getElementById('match-time').textContent = formatTime(state.matchTime);
+}, 1000);

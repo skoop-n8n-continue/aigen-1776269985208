@@ -3,118 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skoop Cricket Live</title>
+    <title>Live Tennis Dashboard - Skoop Agent</title>
+    <!-- Cache Control -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="styles.css?v=cr1ck3t_v1">
+    <link rel="stylesheet" href="styles.css?v=t3nn1s_v1">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="manifest" href="./manifest.json">
 </head>
 <body>
     <div class="app-container">
         <!-- Background Overlay -->
-        <div class="bg-overlay" style="background-image: url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1776269985208%2Fassets%2Fcricket_stadium_signage-1776324336482.png');"></div>
+        <div class="background-overlay" style="background-image: url('https://skoop-dev-code-agent.s3.us-east-1.amazonaws.com/skoop-n8n-continue%2Faigen-1776269985208%2Fassets%2Ftennis_stadium_bg-1776324453258.png');"></div>
 
-        <header>
-            <div class="league-info">
-                <div class="logo-box">
-                    <span class="logo-text">SKOOP</span>
-                    <span class="logo-sub">CRICKET PREMIER</span>
-                </div>
+        <header class="main-header">
+            <div class="tournament-info">
+                <span class="live-indicator">● LIVE</span>
+                <span class="tournament-name">ATP WORLD TOUR - SEMI FINAL</span>
             </div>
-            <div class="match-context">
-                <div class="venue" id="match-venue">Lords, London</div>
-                <div class="match-type" id="match-type">T20 WORLD SERIES</div>
-            </div>
-            <div class="live-tag">● LIVE</div>
+            <div class="match-time" id="match-time">00:00:00</div>
         </header>
 
-        <main>
+        <main class="dashboard-grid">
             <!-- Scoreboard Section -->
-            <section class="main-scoreboard">
-                <div class="team-block current">
-                    <h2 id="batting-team">TITANS</h2>
-                    <div class="score-display">
-                        <span id="runs">0</span><span class="divider">/</span><span id="wickets">0</span>
+            <section class="scoreboard-container glass-panel">
+                <div class="team-row" id="player1-row">
+                    <div class="player-info">
+                        <span class="serve-icon" id="p1-serve">🎾</span>
+                        <h2 class="player-name">C. ALCARAZ</h2>
+                        <span class="country-code">ESP</span>
                     </div>
-                    <div class="overs-display">OVERS <span id="overs">0.0</span> <span class="max-overs">(20)</span></div>
+                    <div class="sets-won" id="p1-sets">1</div>
+                    <div class="games-grid" id="p1-games">
+                        <span class="game-score past">6</span>
+                        <span class="game-score current" id="p1-current-game">4</span>
+                    </div>
+                    <div class="points-box" id="p1-points">40</div>
                 </div>
 
-                <div class="match-status-block">
-                    <div class="rr-container">
-                        <div class="rr-item">
-                            <span class="label">CRR</span>
-                            <span class="value" id="crr">0.00</span>
-                        </div>
-                        <div class="rr-item target-mode" id="target-container" style="display: none;">
-                            <span class="label">RRR</span>
-                            <span class="value" id="rrr">0.00</span>
-                        </div>
-                    </div>
-                    <div class="status-message" id="match-status">TITANS WON THE TOSS AND CHOSE TO BAT</div>
-                </div>
+                <div class="divider"></div>
 
-                <div class="team-block opponent">
-                    <h2 id="bowling-team">DRAGONS</h2>
-                    <div class="target-display" id="target-display" style="opacity: 0.5;">
-                        <span class="label">TARGET</span>
-                        <span class="value" id="target-value">---</span>
+                <div class="team-row" id="player2-row">
+                    <div class="player-info">
+                        <span class="serve-icon" id="p2-serve"></span>
+                        <h2 class="player-name">J. SINNER</h2>
+                        <span class="country-code">ITA</span>
                     </div>
+                    <div class="sets-won" id="p2-sets">0</div>
+                    <div class="games-grid" id="p2-games">
+                        <span class="game-score past">4</span>
+                        <span class="game-score current" id="p2-current-game">3</span>
+                    </div>
+                    <div class="points-box" id="p2-points">15</div>
                 </div>
             </section>
 
-            <!-- Stats Grid -->
-            <section class="stats-grid">
-                <!-- Batting Stats -->
-                <div class="card glass">
-                    <div class="card-title">BATTING</div>
-                    <div class="batting-list" id="batting-stats">
-                        <!-- Batting stats injected here -->
+            <!-- Bottom Stats Grid -->
+            <div class="bottom-grid">
+                <!-- Match Stats Section -->
+                <section class="stats-container glass-panel">
+                    <h3>MATCH STATISTICS</h3>
+                    <div class="stat-group">
+                        <div class="stat-row">
+                            <span class="stat-value" id="p1-aces">5</span>
+                            <span class="stat-label">ACES</span>
+                            <span class="stat-value" id="p2-aces">3</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar p1" id="p1-aces-bar" style="width: 62%"></div>
+                            <div class="stat-bar p2" id="p2-aces-bar" style="width: 38%"></div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Last 6 Balls -->
-                <div class="card glass center-card">
-                    <div class="card-title">LAST OVER</div>
-                    <div class="timeline" id="ball-timeline">
-                        <!-- Balls injected here -->
+                    <div class="stat-group">
+                        <div class="stat-row">
+                            <span class="stat-value" id="p1-winners">24</span>
+                            <span class="stat-label">WINNERS</span>
+                            <span class="stat-value" id="p2-winners">18</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar p1" id="p1-winners-bar" style="width: 57%"></div>
+                            <div class="stat-bar p2" id="p2-winners-bar" style="width: 43%"></div>
+                        </div>
                     </div>
-                    <div class="partnership">
-                        <span class="label">PARTNERSHIP</span>
-                        <span class="value" id="partnership-value">0 (0)</span>
-                    </div>
-                </div>
 
-                <!-- Bowling Stats -->
-                <div class="card glass">
-                    <div class="card-title">BOWLING</div>
-                    <div class="bowling-list" id="bowling-stats">
-                        <!-- Bowling stats injected here -->
+                    <div class="stat-group">
+                        <div class="stat-row">
+                            <span class="stat-value" id="p1-fsrv">68%</span>
+                            <span class="stat-label">1ST SERVE %</span>
+                            <span class="stat-value" id="p2-fsrv">62%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar p1" id="p1-fsrv-bar" style="width: 68%"></div>
+                            <div class="stat-bar p2" id="p2-fsrv-bar" style="width: 62%"></div>
+                        </div>
                     </div>
-                </div>
-            </section>
+
+                    <div class="stat-group">
+                        <div class="stat-row">
+                            <span class="stat-value" id="p1-ue">12</span>
+                            <span class="stat-label">UNFORCED ERRORS</span>
+                            <span class="stat-value" id="p2-ue">15</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar p1" id="p1-ue-bar" style="width: 44%"></div>
+                            <div class="stat-bar p2" id="p2-ue-bar" style="width: 56%"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Points / Log Section -->
+                <section class="log-container glass-panel">
+                    <h3>MATCH EVENTS</h3>
+                    <div id="event-log">
+                        <div class="event-item">Match Started</div>
+                    </div>
+                </section>
+            </div>
         </main>
 
-        <footer>
-            <div class="ticker-label">MATCH COMMENTARY</div>
+        <footer class="news-ticker">
+            <div class="ticker-label">LATEST NEWS</div>
             <div class="ticker-content-wrapper">
-                <div class="ticker-text" id="commentary-ticker">
-                    Welcome to the Skoop Cricket Premier League! The teams are out on the field. Perfect weather for cricket.
+                <div class="ticker-content" id="ticker-content">
+                    WELCOME TO THE CHAMPIONSHIP SERIES • SEMI FINAL ACTION LIVE • WEATHER: 22°C CLEAR SKY • NEXT MATCH: DJOKOVIC VS ZVEREV @ 20:00 • ATTENDANCE: 14,500 • COURT SURFACE: HARD COURT (FAST) • SPEED OF LAST SERVE: 205 KM/H
                 </div>
             </div>
         </footer>
     </div>
 
-    <script src="script.js?v=cr1ck3t_v1"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(function (reg) { console.log('[PWA] SW registered:', reg.scope); })
-                    .catch(function (err) { console.warn('[PWA] SW registration failed:', err); });
-            });
-        }
-    </script>
+    <script src="script.js?v=t3nn1s_v1"></script>
 </body>
 </html>
